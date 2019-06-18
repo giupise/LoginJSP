@@ -30,10 +30,24 @@ public class Servlet2 extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		//response.getWriter().append("Served at: ").append(request.getContextPath());
+
 		
+		HttpSession session = request.getSession(false);
+		UtenteFactory factory = UtenteFactory.getInstance();
 		
+		if (session!=null && 
+				factory.controllaCredenziali((String)session.getAttribute("username"), (String) session.getAttribute("password")) != null) {	
+			
+			
+			request.getRequestDispatcher("View/home.jsp").forward(request, response);
+			
+		} else {
+			
+			if(session != null) {
+				session.invalidate();
+			}
+			response.sendRedirect("login.html");
+		}
 	}
 
 	/**
@@ -49,34 +63,27 @@ public class Servlet2 extends HttpServlet {
 		aggiunge l’utente alla sessione. Se l’utente non può loggarsi, reindirizza alla pagina
 		«accesso_negato.html».*/
 		
-		//se l'utente non è loggato
-		
-		HttpSession session = request.getSession(false);
-		UtenteFactory factory = UtenteFactory.getInstance();
-		
-		if(session == null) {
-	    
+		    
 			String username = request.getParameter("username");
 			String password = request.getParameter("password"); // getParameters("id")
+				
+			UtenteFactory factory = UtenteFactory.getInstance();	
+			Utente utenteLoggato = factory.controllaCredenziali(username, password);
 			
 						
-			if(factory.controllaCredenziali(username, password)) {
-				session = request.getSession();
+			if(utenteLoggato != null) {
+				HttpSession session = request.getSession();
 				session.setAttribute("username", username);
 				session.setAttribute("password", password );
+				
+				request.setAttribute("utente", utenteLoggato);
+				request.getRequestDispatcher("View/home.jsp").forward(request, response);
 				
 				} else {
 			       response.sendRedirect("accesso_negato.html");
 		       
 				}
 
-		     } 
-		
-		   
-		
-		     Utente utenteLoggato = factory.getUtente((String)session.getAttribute("username"));
-		
-		
 		
 		
 	}

@@ -29,16 +29,16 @@ public class UtenteFactory {
 		
 	}
 	
-	public boolean controllaCredenziali(String username, String password) {
+	public Utente controllaCredenziali(String username, String password) {
 		if (username != null && password != null) {
 			for (Utente utente : listaUtenti) {
 				if(username.equals(utente.getUsername()) && password.equals(utente.getPassword())) {
-					return true;
+					return utente;
 			
 				}
 			}
 		} 
-		return false;
+		return null;
 		
 	}
 	

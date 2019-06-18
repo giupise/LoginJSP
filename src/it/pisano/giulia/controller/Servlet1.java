@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import it.pisano.giulia.model.UtenteFactory;
+
 /**
  * Servlet implementation class Servlet1
  */
@@ -27,19 +29,16 @@ public class Servlet1 extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		HttpSession session = request.getSession(false);
+		UtenteFactory factory = UtenteFactory.getInstance();
 		
-				
-		if(request.getSession(false) != null) {
+		if (session!=null && factory.controllaCredenziali((String)session.getAttribute("username"), (String) session.getAttribute("password")) != null) {	
+	
 			response.sendRedirect("home.html");
 		}
 		else {
 			
-			response.getWriter().println("<html><head></head><body><form action = \"home.html\"method = \"post\">"
-			+ "<label for = \"username\" >User</label>" 
-			+ "<input type = \"username\" name=\"username\"> "
-			+ " <label for = \"password\">Password</label>"
-			+ "<input type = \"password\" name=\"password\"> "
-			+ "<button type = \"submit\">Login!</button> </form></body></html>");
+			request.getRequestDispatcher("View/login.jsp").forward(request, response);
 			
 			
 			
